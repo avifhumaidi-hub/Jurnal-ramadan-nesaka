@@ -9,7 +9,7 @@
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- Google Fonts: Amiri (Arab) & Poppins -->
+  <!-- Google Fonts: Amiri & Poppins -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -91,23 +91,44 @@
             <h2 class="text-xl sm:text-2xl font-bold text-emerald-950 flex items-center gap-2">
               <span>📝</span> Input Kegiatan Ibadah Harian
             </h2>
-            <p class="text-xs sm:text-sm text-emerald-700">Pilih kelas & nama santri yang otomatis terhubung ke Master Data GitHub</p>
+            <p class="text-xs sm:text-sm text-emerald-700">14 Kelas Terdaftar di Master Data GitHub</p>
           </div>
           <span id="badge-total-siswa" class="text-xs bg-emerald-100 text-emerald-800 font-semibold px-3 py-1 rounded-full border border-emerald-200">
-            Memuat data...
+            14 Kelas Aktif
           </span>
         </div>
 
         <form id="journal-form" class="space-y-6">
           <!-- Identitas -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <!-- Kelas -->
+            
+            <!-- Kelas (14 Kelas) -->
             <div>
               <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
                 Kelas <span class="text-red-500">*</span>
               </label>
               <select id="kelas" required onchange="onClassChange()" class="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-xl font-medium text-gray-800 shadow-sm focus:ring-2 focus:ring-emerald-500 text-sm">
                 <option value="">Pilih Kelas</option>
+                <optgroup label="Kelas 7">
+                  <option value="7 Kutai">7 Kutai</option>
+                  <option value="7 Majapahit">7 Majapahit</option>
+                  <option value="7 Mataram">7 Mataram</option>
+                  <option value="7 Singhasari">7 Singhasari</option>
+                  <option value="7 Sriwijaya">7 Sriwijaya</option>
+                </optgroup>
+                <optgroup label="Kelas 8">
+                  <option value="8 Kutai">8 Kutai</option>
+                  <option value="8 Majapahit">8 Majapahit</option>
+                  <option value="8 Mataram">8 Mataram</option>
+                  <option value="8 Singhasari">8 Singhasari</option>
+                  <option value="8 Sriwijaya">8 Sriwijaya</option>
+                </optgroup>
+                <optgroup label="Kelas 9">
+                  <option value="9 Majapahit">9 Majapahit</option>
+                  <option value="9 Mataram">9 Mataram</option>
+                  <option value="9 Singhasari">9 Singhasari</option>
+                  <option value="9 Sriwijaya">9 Sriwijaya</option>
+                </optgroup>
               </select>
               <p id="wali-kelas-info" class="text-[11px] text-gray-500 mt-1"></p>
             </div>
@@ -119,7 +140,7 @@
               </label>
               <input type="text" id="nama" required list="student-list" placeholder="Ketik atau pilih nama siswa..." class="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-xl font-medium text-gray-800 shadow-sm focus:ring-2 focus:ring-emerald-500 text-sm">
               <datalist id="student-list"></datalist>
-              <p class="text-[11px] text-emerald-700 mt-1" id="student-hint">Pilih nama siswa dari master data</p>
+              <p class="text-[11px] text-emerald-700 mt-1" id="student-hint">Pilih kelas untuk melihat daftar santri</p>
             </div>
 
             <!-- Tanggal -->
@@ -252,7 +273,7 @@
             <h2 class="text-xl sm:text-2xl font-bold text-emerald-950 flex items-center gap-2">
               <span>📊</span> Rekap Capaian Ibadah Per Kelas
             </h2>
-            <p class="text-xs sm:text-sm text-emerald-700">Persentase kedisiplinan ibadah siswa SMPN 1 Kalipare</p>
+            <p class="text-xs sm:text-sm text-emerald-700">Persentase kedisiplinan ibadah santri dari 14 kelas</p>
           </div>
           <div class="w-full sm:w-60">
             <select id="filter-kelas-rekap" onchange="renderRekap()" class="w-full px-3.5 py-2 bg-white border border-gray-300 rounded-xl text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500">
@@ -356,20 +377,20 @@
 
   <!-- JAVASCRIPT LOGIC -->
   <script>
-    // GitHub Raw URL atau path master-data.json
+    // URL file master data di repository GitHub Anda
     const GITHUB_MASTER_DATA_URL = './master-data.json'; 
 
     let masterData = null;
     let allEntries = JSON.parse(localStorage.getItem('ramadhan_entries_v1') || '[]');
     let deleteTargetId = null;
 
-    // Inisialisasi tanggal hari ini
+    // Set tanggal hari ini
     document.getElementById('tanggal').value = new Date().toISOString().split('T')[0];
     document.getElementById('current-date').textContent = new Date().toLocaleDateString('id-ID', {
       weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
     });
 
-    // Tab Navigation
+    // Navigasi Tab
     function showTab(tabName) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('tab-active'));
@@ -381,13 +402,13 @@
       if (tabName === 'rekap') renderRekap();
     }
 
-    // Toggle input surat tadarus
+    // Toggle Input Surat Tadarus
     function toggleTadarusInput() {
       const isChecked = document.getElementById('tadarus').checked;
       document.getElementById('tadarus-fields').style.display = isChecked ? 'block' : 'none';
     }
 
-    // Centang / Lepas semua checklist
+    // Centang / Batal Semua Checklist
     function setAllCheckboxes(val) {
       ['puasa', 'sahur', 'sholat_subuh', 'sholat_dzuhur', 'sholat_asar', 'sholat_magrib', 'sholat_isya', 'tarawih', 'tadarus', 'sedekah'].forEach(id => {
         document.getElementById(id).checked = val;
@@ -406,37 +427,34 @@
       }, 3000);
     }
 
-    // Copy Doa
+    // Salin Doa
     function copyPrayer(elemId) {
       const text = document.getElementById(elemId).innerText;
       navigator.clipboard.writeText(text);
       showToast('Doa berhasil disalin ke clipboard! 📋');
     }
 
-    // Fetch Master Data dari GitHub
+    // Muat Master Data dari GitHub
     async function loadMasterDataFromGitHub() {
       try {
         const res = await fetch(GITHUB_MASTER_DATA_URL);
         if (!res.ok) throw new Error('Status: ' + res.status);
         masterData = await res.json();
         
-        // Simpan cache lokal
         localStorage.setItem('cached_master_data', JSON.stringify(masterData));
         populateClassDropdowns();
-        showToast('Master data GitHub berhasil dimuat! ✨');
+        showToast('Master Data GitHub berhasil terhubung! ✨');
       } catch (err) {
         console.warn('Gagal fetch remote GitHub, mencoba cache lokal', err);
         const cached = localStorage.getItem('cached_master_data');
         if (cached) {
           masterData = JSON.parse(cached);
           populateClassDropdowns();
-        } else {
-          showToast('Menggunakan daftar kelas default.', true);
         }
       }
     }
 
-    // Populate Dropdown Kelas
+    // Isi Dropdown Kelas & Filter
     function populateClassDropdowns() {
       if (!masterData || !masterData.classes) return;
 
@@ -449,30 +467,40 @@
       filterRekap.innerHTML = '<option value="">Semua Kelas</option>';
 
       let totalStudents = 0;
+      const grades = [7, 8, 9];
 
-      masterData.classes.forEach(c => {
-        totalStudents += (c.students ? c.students.length : 0);
+      grades.forEach(g => {
+        const groupClasses = masterData.classes.filter(c => c.grade === g);
+        if (groupClasses.length > 0) {
+          const optGroup = document.createElement('optgroup');
+          optGroup.label = `Kelas ${g}`;
 
-        const opt1 = document.createElement('option');
-        opt1.value = c.name;
-        opt1.textContent = c.name;
-        kelasSelect.appendChild(opt1);
+          groupClasses.forEach(c => {
+            totalStudents += (c.students ? c.students.length : 0);
+            const opt = document.createElement('option');
+            opt.value = c.name;
+            opt.textContent = c.name;
+            optGroup.appendChild(opt);
 
-        const opt2 = document.createElement('option');
-        opt2.value = c.name;
-        opt2.textContent = c.name;
-        filterRiwayat.appendChild(opt2);
+            const optR = document.createElement('option');
+            optR.value = c.name;
+            optR.textContent = c.name;
+            filterRiwayat.appendChild(optR);
 
-        const opt3 = document.createElement('option');
-        opt3.value = c.name;
-        opt3.textContent = c.name;
-        filterRekap.appendChild(opt3);
+            const optK = document.createElement('option');
+            optK.value = c.name;
+            optK.textContent = c.name;
+            filterRekap.appendChild(optK);
+          });
+
+          kelasSelect.appendChild(optGroup);
+        }
       });
 
-      document.getElementById('badge-total-siswa').textContent = `Master Data: ${masterData.classes.length} Kelas • ${totalStudents} Siswa`;
+      document.getElementById('badge-total-siswa').textContent = `${masterData.classes.length} Kelas • ${totalStudents} Siswa`;
     }
 
-    // On Class Change: Update Datalist Siswa & Wali Kelas
+    // Saat Kelas Dipilih: Tampilkan Nama Siswa Otomatis
     function onClassChange() {
       const selectedClass = document.getElementById('kelas').value;
       const datalist = document.getElementById('student-list');
@@ -494,12 +522,12 @@
             opt.value = st;
             datalist.appendChild(opt);
           });
-          hint.textContent = `Tersedia ${cls.students.length} nama siswa dari Master Data GitHub`;
+          hint.textContent = `Tersedia ${cls.students.length} nama santri di master data`;
         }
       }
     }
 
-    // Form Submission
+    // Simpan Jurnal
     document.getElementById('journal-form').addEventListener('submit', function(e) {
       e.preventDefault();
 
@@ -608,7 +636,7 @@
       showToast('Entri berhasil dihapus');
     });
 
-    // Render Rekap
+    // Render Rekap 14 Kelas
     function renderRekap() {
       const container = document.getElementById('rekap-container');
       const filterKelas = document.getElementById('filter-kelas-rekap').value;
@@ -627,7 +655,6 @@
         const countPuasa = classEntries.filter(e => e.puasa).length;
         const countTarawih = classEntries.filter(e => e.tarawih).length;
         const countTadarus = classEntries.filter(e => e.tadarus).length;
-        const countSubuh = classEntries.filter(e => e.sholat_subuh).length;
 
         const pctPuasa = total > 0 ? Math.round((countPuasa / total) * 100) : 0;
         const pctTarawih = total > 0 ? Math.round((countTarawih / total) * 100) : 0;
@@ -702,7 +729,7 @@
       link.click();
     }
 
-    // Inisialisasi saat web dibuka
+    // Inisialisasi awal
     loadMasterDataFromGitHub();
   </script>
 </body>
