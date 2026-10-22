@@ -1,0 +1,709 @@
+<!doctype html>
+<html lang="id" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jurnal Ramadhan SMPN 1 Kalipare</title>
+  <meta name="description" content="Aplikasi Jurnal Ramadhan SMPN 1 Kalipare dengan integrasi Master Data GitHub.">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Amiri (Arab) & Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    body { font-family: 'Poppins', sans-serif; }
+    .arabic-text { font-family: 'Amiri', serif; line-height: 2.2; }
+    .gradient-bg { background: linear-gradient(135deg, #091e17 0%, #064e3b 50%, #022c22 100%); }
+    .card-glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.8); }
+    .islamic-pattern {
+      background-image: radial-gradient(rgba(16, 185, 129, 0.15) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .tab-active { 
+      background: linear-gradient(135deg, #059669, #0d9488);
+      color: white !important;
+      box-shadow: 0 4px 15px rgba(5, 150, 105, 0.4);
+    }
+  </style>
+</head>
+<body class="min-h-full gradient-bg islamic-pattern text-slate-800 flex flex-col">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 bg-gradient-to-r from-emerald-950 via-teal-900 to-emerald-900 shadow-xl border-b border-emerald-700/50">
+    <div class="max-w-6xl mx-auto px-4 py-3 sm:py-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 bg-emerald-500/20 border border-emerald-400/40 rounded-2xl flex items-center justify-center text-2xl shadow-inner">
+            🌙
+          </div>
+          <div>
+            <h1 class="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
+              Jurnal Ramadhan
+              <span class="text-xs bg-emerald-500/30 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-500/40">1446 H</span>
+            </h1>
+            <p id="school-name" class="text-emerald-300 text-xs sm:text-sm font-medium">SMP NEGERI 1 KALIPARE</p>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between sm:justify-end gap-3 text-right">
+          <div>
+            <p id="current-date" class="text-white text-xs sm:text-sm font-semibold"></p>
+            <p id="github-status-badge" class="text-[11px] text-emerald-300 flex items-center gap-1 justify-end">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
+              <span id="github-status-text">Master Data: GitHub Terhubung</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="max-w-6xl mx-auto px-4 pt-4 pb-2 w-full">
+    <div class="flex flex-wrap gap-2 justify-center bg-slate-900/60 p-1.5 rounded-2xl border border-emerald-500/20 max-w-xl mx-auto backdrop-blur-md">
+      <button onclick="showTab('input')" id="tab-input" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-emerald-100 hover:text-white tab-active">
+        📝 Input Jurnal
+      </button>
+      <button onclick="showTab('riwayat')" id="tab-riwayat" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-emerald-100 hover:text-white">
+        📋 Riwayat Entri
+      </button>
+      <button onclick="showTab('rekap')" id="tab-rekap" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-emerald-100 hover:text-white">
+        📊 Rekap Kelas
+      </button>
+      <button onclick="showTab('doa')" id="tab-doa" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-emerald-100 hover:text-white">
+        🤲 Doa & Niat
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 py-4 flex-1 w-full">
+
+    <!-- TAB 1: INPUT JURNAL -->
+    <div id="content-input" class="tab-content space-y-6">
+      <div class="card-glass rounded-3xl shadow-xl p-6 sm:p-8">
+        <div class="flex items-center justify-between pb-4 mb-5 border-b border-gray-100">
+          <div>
+            <h2 class="text-xl sm:text-2xl font-bold text-emerald-950 flex items-center gap-2">
+              <span>📝</span> Input Kegiatan Ibadah Harian
+            </h2>
+            <p class="text-xs sm:text-sm text-emerald-700">Pilih kelas & nama santri yang otomatis terhubung ke Master Data GitHub</p>
+          </div>
+          <span id="badge-total-siswa" class="text-xs bg-emerald-100 text-emerald-800 font-semibold px-3 py-1 rounded-full border border-emerald-200">
+            Memuat data...
+          </span>
+        </div>
+
+        <form id="journal-form" class="space-y-6">
+          <!-- Identitas -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Kelas -->
+            <div>
+              <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
+                Kelas <span class="text-red-500">*</span>
+              </label>
+              <select id="kelas" required onchange="onClassChange()" class="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-xl font-medium text-gray-800 shadow-sm focus:ring-2 focus:ring-emerald-500 text-sm">
+                <option value="">Pilih Kelas</option>
+              </select>
+              <p id="wali-kelas-info" class="text-[11px] text-gray-500 mt-1"></p>
+            </div>
+
+            <!-- Nama Siswa Autocomplete -->
+            <div class="relative">
+              <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
+                Nama Lengkap Siswa <span class="text-red-500">*</span>
+              </label>
+              <input type="text" id="nama" required list="student-list" placeholder="Ketik atau pilih nama siswa..." class="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-xl font-medium text-gray-800 shadow-sm focus:ring-2 focus:ring-emerald-500 text-sm">
+              <datalist id="student-list"></datalist>
+              <p class="text-[11px] text-emerald-700 mt-1" id="student-hint">Pilih nama siswa dari master data</p>
+            </div>
+
+            <!-- Tanggal -->
+            <div>
+              <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
+                Tanggal <span class="text-red-500">*</span>
+              </label>
+              <input type="date" id="tanggal" required class="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-xl font-medium text-gray-800 shadow-sm focus:ring-2 focus:ring-emerald-500 text-sm">
+            </div>
+          </div>
+
+          <!-- Checklist Ibadah -->
+          <div class="bg-gradient-to-r from-emerald-50/80 to-teal-50/80 rounded-2xl p-5 border border-emerald-100">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-bold text-emerald-950 text-sm sm:text-base flex items-center gap-2">
+                <span>🕌</span> Checklist Ibadah Harian
+              </h3>
+              <div class="flex gap-2">
+                <button type="button" onclick="setAllCheckboxes(true)" class="text-xs bg-white text-emerald-700 px-2.5 py-1 rounded-lg border border-emerald-200 font-semibold hover:bg-emerald-50">Centang Semua</button>
+                <button type="button" onclick="setAllCheckboxes(false)" class="text-xs bg-white text-gray-600 px-2.5 py-1 rounded-lg border border-gray-200 font-semibold hover:bg-gray-50">Batal</button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+              <label class="flex items-center gap-2 bg-white p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-emerald-300 transition">
+                <input type="checkbox" id="puasa" checked class="w-5 h-5 text-emerald-600 rounded">
+                <span class="text-xs sm:text-sm font-semibold">🍽️ Puasa</span>
+              </label>
+              <label class="flex items-center gap-2 bg-white p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-emerald-300 transition">
+                <input type="checkbox" id="sahur" checked class="w-5 h-5 text-emerald-600 rounded">
+                <span class="text-xs sm:text-sm font-semibold">🌙 Sahur</span>
+              </label>
+              <label class="flex items-center gap-2 bg-white p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-emerald-300 transition">
+                <input type="checkbox" id="sholat_subuh" checked class="w-5 h-5 text-emerald-600 rounded">
+                <span class="text-xs sm:text-sm font-semibold">🌅 Subuh</span>
+              </label>
+              <label class="flex items-center gap-2 bg-white p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-emerald-300 transition">
+                <input type="checkbox" id="sholat_dzuhur" checked class="w-5 h-5 text-emerald-600 rounded">
+                <span class="text-xs sm:text-sm font-semibold">☀️ Dzuhur</span>
+              </label>
+              <label class="flex items-center gap-2 bg-white p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-emerald-300 transition">
+                <input type="checkbox" id="sholat_asar" checked class="w-5 h-5 text-emerald-600 rounded">
+                <span class="text-xs sm:text-sm font-semibold">🌤️ Asar</span>
+              </label>
+              <label class="flex items-center gap-2 bg-white p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-emerald-300 transition">
+                <input type="checkbox" id="sholat_magrib" checked class="w-5 h-5 text-emerald-600 rounded">
+                <span class="text-xs sm:text-sm font-semibold">🌆 Magrib</span>
+              </label>
+              <label class="flex items-center gap-2 bg-white p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-emerald-300 transition">
+                <input type="checkbox" id="sholat_isya" checked class="w-5 h-5 text-emerald-600 rounded">
+                <span class="text-xs sm:text-sm font-semibold">🌃 Isya'</span>
+              </label>
+              <label class="flex items-center gap-2 bg-white p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-emerald-300 transition">
+                <input type="checkbox" id="tarawih" checked class="w-5 h-5 text-emerald-600 rounded">
+                <span class="text-xs sm:text-sm font-semibold">✨ Tarawih</span>
+              </label>
+              <label class="flex items-center gap-2 bg-white p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-emerald-300 transition">
+                <input type="checkbox" id="tadarus" checked onchange="toggleTadarusInput()" class="w-5 h-5 text-emerald-600 rounded">
+                <span class="text-xs sm:text-sm font-semibold">📖 Tadarus</span>
+              </label>
+              <label class="flex items-center gap-2 bg-white p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-emerald-300 transition">
+                <input type="checkbox" id="sedekah" class="w-5 h-5 text-emerald-600 rounded">
+                <span class="text-xs sm:text-sm font-semibold">💝 Sedekah</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Detail Tadarus -->
+          <div id="tadarus-fields" class="bg-amber-50/80 rounded-2xl p-4 border border-amber-200">
+            <h4 class="font-bold text-amber-950 text-xs uppercase tracking-wider mb-2">Rincian Bacaan Tadarus Al-Qur'an</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div class="sm:col-span-2">
+                <input type="text" id="tadarus_surat" placeholder="Nama Surat (contoh: Al-Baqarah, Yasin, Al-Mulk...)" class="w-full px-3.5 py-2 bg-white border border-amber-300 rounded-xl text-sm focus:ring-2 focus:ring-amber-500">
+              </div>
+              <div>
+                <input type="text" id="tadarus_ayat" placeholder="Ayat (contoh: Ayat 1-25)" class="w-full px-3.5 py-2 bg-white border border-amber-300 rounded-xl text-sm focus:ring-2 focus:ring-amber-500">
+              </div>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="flex justify-center pt-2">
+            <button type="submit" id="submit-btn" class="px-8 py-3.5 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-bold rounded-2xl shadow-lg shadow-emerald-700/30 transition transform hover:scale-[1.02] flex items-center gap-2 text-sm sm:text-base cursor-pointer">
+              <span>💾</span> Simpan Jurnal Ramadhan
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- TAB 2: RIWAYAT ENTRI & EKSPOR -->
+    <div id="content-riwayat" class="tab-content hidden space-y-6">
+      <div class="card-glass rounded-3xl shadow-xl p-6 sm:p-8">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-gray-100 gap-3">
+          <div>
+            <h2 class="text-xl sm:text-2xl font-bold text-emerald-950 flex items-center gap-2">
+              <span>📋</span> Seluruh Riwayat Jurnal Siswa
+            </h2>
+            <p class="text-xs sm:text-sm text-emerald-700">Daftar rekaman ibadah tersimpan di browser</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="exportToCSV()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition shadow-sm">
+              📥 Ekspor Excel (CSV)
+            </button>
+            <button onclick="window.print()" class="px-3.5 py-2 bg-white border border-gray-300 hover:bg-gray-50 rounded-xl text-xs font-semibold text-gray-700 transition">
+              🖨️ Cetak
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter bar -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+          <input type="text" id="filter-search" oninput="renderRecentEntries()" placeholder="Cari nama santri..." class="px-3.5 py-2 bg-white border border-gray-300 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-emerald-500">
+          <select id="filter-kelas-riwayat" onchange="renderRecentEntries()" class="px-3.5 py-2 bg-white border border-gray-300 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-emerald-500">
+            <option value="">Semua Kelas</option>
+          </select>
+        </div>
+
+        <div id="recent-entries-list" class="space-y-3">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: REKAP KELAS -->
+    <div id="content-rekap" class="tab-content hidden space-y-6">
+      <div class="card-glass rounded-3xl shadow-xl p-6 sm:p-8">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-5 border-b border-gray-100 gap-3">
+          <div>
+            <h2 class="text-xl sm:text-2xl font-bold text-emerald-950 flex items-center gap-2">
+              <span>📊</span> Rekap Capaian Ibadah Per Kelas
+            </h2>
+            <p class="text-xs sm:text-sm text-emerald-700">Persentase kedisiplinan ibadah siswa SMPN 1 Kalipare</p>
+          </div>
+          <div class="w-full sm:w-60">
+            <select id="filter-kelas-rekap" onchange="renderRekap()" class="w-full px-3.5 py-2 bg-white border border-gray-300 rounded-xl text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500">
+              <option value="">Semua Kelas</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="rekap-container" class="space-y-6">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: DOA & NIAT -->
+    <div id="content-doa" class="tab-content hidden space-y-6">
+      <!-- Niat Puasa -->
+      <div class="card-glass rounded-3xl shadow-xl p-6 sm:p-8">
+        <div class="flex items-center justify-between pb-3 mb-4 border-b border-gray-100">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">🌙</span>
+            <h3 class="text-lg font-bold text-emerald-900">Niat Puasa Ramadhan</h3>
+          </div>
+          <button onclick="copyPrayer('niat-puasa-text')" class="text-xs font-semibold px-3 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl border border-emerald-200">Salin Doa</button>
+        </div>
+        <div class="bg-emerald-50/70 rounded-2xl p-6 text-center border border-emerald-100" id="niat-puasa-text">
+          <p class="arabic-text text-2xl sm:text-3xl text-gray-900 mb-3" dir="rtl">نَوَيْتُ صَوْمَ غَدٍ عَنْ أَدَاءِ فَرْضِ شَهْرِ رَمَضَانَ هٰذِهِ السَّنَةِ لِلّٰهِ تَعَالَى</p>
+          <p class="text-sm text-gray-600 italic mb-2">Nawaitu shauma ghadin 'an adaa'i fardhi syahri ramadhaana haadzihis sanati lillaahi ta'aalaa</p>
+          <p class="text-xs sm:text-sm text-gray-800 font-medium">"Saya niat puasa esok hari untuk menunaikan fardhu Ramadhan tahun ini karena Allah Ta'ala."</p>
+        </div>
+      </div>
+
+      <!-- Doa Berbuka -->
+      <div class="card-glass rounded-3xl shadow-xl p-6 sm:p-8">
+        <div class="flex items-center justify-between pb-3 mb-4 border-b border-gray-100">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">🍽️</span>
+            <h3 class="text-lg font-bold text-amber-900">Doa Berbuka Puasa</h3>
+          </div>
+          <button onclick="copyPrayer('doa-buka-text')" class="text-xs font-semibold px-3 py-1.5 bg-amber-50 text-amber-700 hover:bg-amber-100 rounded-xl border border-amber-200">Salin Doa</button>
+        </div>
+        <div class="bg-amber-50/70 rounded-2xl p-6 text-center border border-amber-100" id="doa-buka-text">
+          <p class="arabic-text text-2xl sm:text-3xl text-gray-900 mb-3" dir="rtl">اَللّٰهُمَّ لَكَ صُمْتُ وَبِكَ آمَنْتُ وَعَلَى رِزْقِكَ أَفْطَرْتُ بِرَحْمَتِكَ يَا أَرْحَمَ الرَّاحِمِيْنَ</p>
+          <p class="text-sm text-gray-600 italic mb-2">Allahumma laka shumtu wa bika aamantu wa 'alaa rizqika afthartu birahmatika yaa arhamar raahimiin</p>
+          <p class="text-xs sm:text-sm text-gray-800 font-medium">"Ya Allah, untuk-Mu aku berpuasa, kepada-Mu aku beriman, dan dengan rezeki-Mu aku berbuka, dengan rahmat-Mu wahai Yang Maha Penyayang."</p>
+        </div>
+      </div>
+
+      <!-- Niat Tarawih -->
+      <div class="card-glass rounded-3xl shadow-xl p-6 sm:p-8">
+        <div class="flex items-center justify-between pb-3 mb-4 border-b border-gray-100">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">✨</span>
+            <h3 class="text-lg font-bold text-purple-900">Niat Sholat Tarawih</h3>
+          </div>
+          <button onclick="copyPrayer('niat-tarawih-text')" class="text-xs font-semibold px-3 py-1.5 bg-purple-50 text-purple-700 hover:bg-purple-100 rounded-xl border border-purple-200">Salin Doa</button>
+        </div>
+        <div class="bg-purple-50/70 rounded-2xl p-6 text-center border border-purple-100" id="niat-tarawih-text">
+          <p class="arabic-text text-2xl sm:text-3xl text-gray-900 mb-3" dir="rtl">أُصَلِّي سُنَّةَ التَّرَاوِيْحِ رَكْعَتَيْنِ مَأْمُوْمًا لِلّٰهِ تَعَالَى</p>
+          <p class="text-sm text-gray-600 italic mb-2">Ushallii sunnatan taraawiihi rak'ataini ma'muuman lillaahi ta'aalaa</p>
+          <p class="text-xs sm:text-sm text-gray-800 font-medium">"Saya niat sholat sunnah tarawih dua rakaat sebagai makmum karena Allah Ta'ala."</p>
+        </div>
+      </div>
+
+      <!-- Doa Kamilin -->
+      <div class="card-glass rounded-3xl shadow-xl p-6 sm:p-8">
+        <div class="flex items-center justify-between pb-3 mb-4 border-b border-gray-100">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">🤲</span>
+            <h3 class="text-lg font-bold text-blue-900">Doa Setelah Tarawih (Doa Kamilin)</h3>
+          </div>
+          <button onclick="copyPrayer('doa-kamilin-text')" class="text-xs font-semibold px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-xl border border-blue-200">Salin Doa</button>
+        </div>
+        <div class="bg-blue-50/70 rounded-2xl p-6 text-center border border-blue-100" id="doa-kamilin-text">
+          <p class="arabic-text text-xl sm:text-2xl text-gray-900 mb-3" dir="rtl">اَللّٰهُمَّ اجْعَلْنَا بِالْإِيْمَانِ كَامِلِيْنَ وَلِلْفَرَائِضِ مُؤَدِّيْنَ وَلِلصَّلَاةِ حَافِظِيْنَ وَلِلزَّكَاةِ فَاعِلِيْنَ وَلِمَا عِنْدَكَ طَالِبِيْنَ وَلِعَفْوِكَ رَاجِيْنَ وَبِالْهُدَى مُتَمَسِّكِيْنَ وَعَنِ اللَّغْوِ مُعْرِضِيْنَ</p>
+          <p class="text-xs sm:text-sm text-gray-600 italic mb-2">Allahummaj'alnaa bil iimaani kaamiliin, wa lilfaraa'idhi mu'addiin, wa lishshalaati haafizhiin, wa lizzakaati faa'iliin...</p>
+          <p class="text-xs sm:text-sm text-gray-800 font-medium">"Ya Allah, jadikanlah kami orang yang sempurna imannya, menunaikan kewajiban, memelihara sholat, menunaikan zakat, mencari apa yang ada di sisi-Mu..."</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Delete Modal -->
+  <div id="delete-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl text-center">
+      <div class="text-4xl mb-3">🗑️</div>
+      <h3 class="text-lg font-bold text-gray-900 mb-1">Hapus Entri Jurnal?</h3>
+      <p class="text-xs text-gray-500 mb-5">Apakah Anda yakin ingin menghapus catatan ibadah ini?</p>
+      <div class="flex gap-2">
+        <button onclick="closeDeleteModal()" class="flex-1 py-2.5 rounded-xl border border-gray-300 text-gray-700 text-xs font-bold">Batal</button>
+        <button id="btn-confirm-delete" class="flex-1 py-2.5 rounded-xl bg-red-600 text-white text-xs font-bold">Hapus</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 bg-emerald-600 text-white px-5 py-3 rounded-2xl shadow-2xl font-medium text-xs sm:text-sm opacity-0 transform translate-y-10 transition-all duration-300 pointer-events-none">
+    <span id="toast-msg">Berhasil disimpan! ✨</span>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // GitHub Raw URL atau path master-data.json
+    const GITHUB_MASTER_DATA_URL = './master-data.json'; 
+
+    let masterData = null;
+    let allEntries = JSON.parse(localStorage.getItem('ramadhan_entries_v1') || '[]');
+    let deleteTargetId = null;
+
+    // Inisialisasi tanggal hari ini
+    document.getElementById('tanggal').value = new Date().toISOString().split('T')[0];
+    document.getElementById('current-date').textContent = new Date().toLocaleDateString('id-ID', {
+      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+    });
+
+    // Tab Navigation
+    function showTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('tab-active'));
+
+      document.getElementById('content-' + tabName).classList.remove('hidden');
+      document.getElementById('tab-' + tabName).classList.add('tab-active');
+
+      if (tabName === 'riwayat') renderRecentEntries();
+      if (tabName === 'rekap') renderRekap();
+    }
+
+    // Toggle input surat tadarus
+    function toggleTadarusInput() {
+      const isChecked = document.getElementById('tadarus').checked;
+      document.getElementById('tadarus-fields').style.display = isChecked ? 'block' : 'none';
+    }
+
+    // Centang / Lepas semua checklist
+    function setAllCheckboxes(val) {
+      ['puasa', 'sahur', 'sholat_subuh', 'sholat_dzuhur', 'sholat_asar', 'sholat_magrib', 'sholat_isya', 'tarawih', 'tadarus', 'sedekah'].forEach(id => {
+        document.getElementById(id).checked = val;
+      });
+      toggleTadarusInput();
+    }
+
+    // Toast
+    function showToast(msg, isError = false) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-msg');
+      toastMsg.textContent = msg;
+      toast.className = `fixed bottom-5 right-5 z-50 ${isError ? 'bg-red-600' : 'bg-emerald-600'} text-white px-5 py-3 rounded-2xl shadow-2xl font-medium text-xs sm:text-sm opacity-100 transform translate-y-0 transition-all duration-300`;
+      setTimeout(() => {
+        toast.className = 'fixed bottom-5 right-5 z-50 bg-emerald-600 text-white px-5 py-3 rounded-2xl shadow-2xl font-medium text-xs sm:text-sm opacity-0 transform translate-y-10 transition-all duration-300 pointer-events-none';
+      }, 3000);
+    }
+
+    // Copy Doa
+    function copyPrayer(elemId) {
+      const text = document.getElementById(elemId).innerText;
+      navigator.clipboard.writeText(text);
+      showToast('Doa berhasil disalin ke clipboard! 📋');
+    }
+
+    // Fetch Master Data dari GitHub
+    async function loadMasterDataFromGitHub() {
+      try {
+        const res = await fetch(GITHUB_MASTER_DATA_URL);
+        if (!res.ok) throw new Error('Status: ' + res.status);
+        masterData = await res.json();
+        
+        // Simpan cache lokal
+        localStorage.setItem('cached_master_data', JSON.stringify(masterData));
+        populateClassDropdowns();
+        showToast('Master data GitHub berhasil dimuat! ✨');
+      } catch (err) {
+        console.warn('Gagal fetch remote GitHub, mencoba cache lokal', err);
+        const cached = localStorage.getItem('cached_master_data');
+        if (cached) {
+          masterData = JSON.parse(cached);
+          populateClassDropdowns();
+        } else {
+          showToast('Menggunakan daftar kelas default.', true);
+        }
+      }
+    }
+
+    // Populate Dropdown Kelas
+    function populateClassDropdowns() {
+      if (!masterData || !masterData.classes) return;
+
+      const kelasSelect = document.getElementById('kelas');
+      const filterRiwayat = document.getElementById('filter-kelas-riwayat');
+      const filterRekap = document.getElementById('filter-kelas-rekap');
+
+      kelasSelect.innerHTML = '<option value="">Pilih Kelas</option>';
+      filterRiwayat.innerHTML = '<option value="">Semua Kelas</option>';
+      filterRekap.innerHTML = '<option value="">Semua Kelas</option>';
+
+      let totalStudents = 0;
+
+      masterData.classes.forEach(c => {
+        totalStudents += (c.students ? c.students.length : 0);
+
+        const opt1 = document.createElement('option');
+        opt1.value = c.name;
+        opt1.textContent = c.name;
+        kelasSelect.appendChild(opt1);
+
+        const opt2 = document.createElement('option');
+        opt2.value = c.name;
+        opt2.textContent = c.name;
+        filterRiwayat.appendChild(opt2);
+
+        const opt3 = document.createElement('option');
+        opt3.value = c.name;
+        opt3.textContent = c.name;
+        filterRekap.appendChild(opt3);
+      });
+
+      document.getElementById('badge-total-siswa').textContent = `Master Data: ${masterData.classes.length} Kelas • ${totalStudents} Siswa`;
+    }
+
+    // On Class Change: Update Datalist Siswa & Wali Kelas
+    function onClassChange() {
+      const selectedClass = document.getElementById('kelas').value;
+      const datalist = document.getElementById('student-list');
+      const waliInfo = document.getElementById('wali-kelas-info');
+      const hint = document.getElementById('student-hint');
+      datalist.innerHTML = '';
+
+      if (!selectedClass || !masterData) {
+        waliInfo.textContent = '';
+        return;
+      }
+
+      const cls = masterData.classes.find(c => c.name === selectedClass);
+      if (cls) {
+        if (cls.wali_kelas) waliInfo.textContent = 'Wali Kelas: ' + cls.wali_kelas;
+        if (cls.students) {
+          cls.students.forEach(st => {
+            const opt = document.createElement('option');
+            opt.value = st;
+            datalist.appendChild(opt);
+          });
+          hint.textContent = `Tersedia ${cls.students.length} nama siswa dari Master Data GitHub`;
+        }
+      }
+    }
+
+    // Form Submission
+    document.getElementById('journal-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const nama = document.getElementById('nama').value.trim();
+      const kelas = document.getElementById('kelas').value;
+      const tanggal = document.getElementById('tanggal').value;
+
+      if (!nama || !kelas) {
+        showToast('Silakan pilih kelas dan isi nama siswa.', true);
+        return;
+      }
+
+      const newEntry = {
+        id: 'jr_' + Date.now(),
+        nama,
+        kelas,
+        tanggal,
+        puasa: document.getElementById('puasa').checked,
+        sahur: document.getElementById('sahur').checked,
+        sholat_subuh: document.getElementById('sholat_subuh').checked,
+        sholat_dzuhur: document.getElementById('sholat_dzuhur').checked,
+        sholat_asar: document.getElementById('sholat_asar').checked,
+        sholat_magrib: document.getElementById('sholat_magrib').checked,
+        sholat_isya: document.getElementById('sholat_isya').checked,
+        tarawih: document.getElementById('tarawih').checked,
+        tadarus: document.getElementById('tadarus').checked,
+        tadarus_surat: document.getElementById('tadarus_surat').value.trim(),
+        tadarus_ayat: document.getElementById('tadarus_ayat').value.trim(),
+        sedekah: document.getElementById('sedekah').checked,
+        created_at: new Date().toISOString()
+      };
+
+      allEntries.unshift(newEntry);
+      localStorage.setItem('ramadhan_entries_v1', JSON.stringify(allEntries));
+
+      showToast(`Jurnal ${nama} berhasil disimpan! 🎉`);
+      document.getElementById('nama').value = '';
+      document.getElementById('tadarus_surat').value = '';
+      document.getElementById('tadarus_ayat').value = '';
+    });
+
+    // Render Riwayat
+    function renderRecentEntries() {
+      const container = document.getElementById('recent-entries-list');
+      const search = (document.getElementById('filter-search').value || '').toLowerCase();
+      const filterKelas = document.getElementById('filter-kelas-riwayat').value;
+
+      const filtered = allEntries.filter(e => {
+        const matchSearch = !search || e.nama.toLowerCase().includes(search);
+        const matchKelas = !filterKelas || e.kelas === filterKelas;
+        return matchSearch && matchKelas;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<p class="text-center py-8 text-gray-400 text-xs sm:text-sm">Belum ada riwayat entri.</p>';
+        return;
+      }
+
+      container.innerHTML = filtered.map(e => {
+        const activities = [];
+        if (e.puasa) activities.push('🍽️ Puasa');
+        if (e.sahur) activities.push('🌙 Sahur');
+        if (e.sholat_subuh) activities.push('🌅 Subuh');
+        if (e.sholat_dzuhur) activities.push('☀️ Dzuhur');
+        if (e.sholat_asar) activities.push('🌤️ Asar');
+        if (e.sholat_magrib) activities.push('🌆 Magrib');
+        if (e.sholat_isya) activities.push('🌃 Isya');
+        if (e.tarawih) activities.push('✨ Tarawih');
+        if (e.tadarus) activities.push('📖 Tadarus');
+        if (e.sedekah) activities.push('💝 Sedekah');
+
+        return `
+          <div class="bg-white/80 p-4 rounded-2xl border border-gray-200 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-xs">
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="font-bold text-gray-900">${e.nama}</span>
+                <span class="text-xs bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-semibold">${e.kelas}</span>
+                <span class="text-xs text-gray-400">• ${e.tanggal}</span>
+              </div>
+              <div class="flex flex-wrap gap-1.5 mt-2">
+                ${activities.map(a => `<span class="text-[11px] bg-slate-50 border px-2 py-0.5 rounded-md font-medium text-slate-700">${a}</span>`).join('')}
+              </div>
+              ${e.tadarus && e.tadarus_surat ? `<p class="text-xs text-amber-800 font-semibold mt-1.5">📖 Surat ${e.tadarus_surat} ${e.tadarus_ayat ? '(' + e.tadarus_ayat + ')' : ''}</p>` : ''}
+            </div>
+            <button onclick="openDeleteModal('${e.id}')" class="text-red-500 hover:bg-red-50 p-2 rounded-xl transition text-base self-end md:self-center">🗑️</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Modal Hapus
+    function openDeleteModal(id) {
+      deleteTargetId = id;
+      document.getElementById('delete-modal').classList.remove('hidden');
+    }
+    function closeDeleteModal() {
+      deleteTargetId = null;
+      document.getElementById('delete-modal').classList.add('hidden');
+    }
+    document.getElementById('btn-confirm-delete').addEventListener('click', () => {
+      if (!deleteTargetId) return;
+      allEntries = allEntries.filter(e => e.id !== deleteTargetId);
+      localStorage.setItem('ramadhan_entries_v1', JSON.stringify(allEntries));
+      closeDeleteModal();
+      renderRecentEntries();
+      showToast('Entri berhasil dihapus');
+    });
+
+    // Render Rekap
+    function renderRekap() {
+      const container = document.getElementById('rekap-container');
+      const filterKelas = document.getElementById('filter-kelas-rekap').value;
+
+      if (!masterData || !masterData.classes) {
+        container.innerHTML = '<p class="text-center py-6 text-gray-400">Master data kelas belum dimuat.</p>';
+        return;
+      }
+
+      const targetClasses = filterKelas ? masterData.classes.filter(c => c.name === filterKelas) : masterData.classes;
+
+      container.innerHTML = targetClasses.map(cls => {
+        const classEntries = allEntries.filter(e => e.kelas === cls.name);
+        const total = classEntries.length;
+
+        const countPuasa = classEntries.filter(e => e.puasa).length;
+        const countTarawih = classEntries.filter(e => e.tarawih).length;
+        const countTadarus = classEntries.filter(e => e.tadarus).length;
+        const countSubuh = classEntries.filter(e => e.sholat_subuh).length;
+
+        const pctPuasa = total > 0 ? Math.round((countPuasa / total) * 100) : 0;
+        const pctTarawih = total > 0 ? Math.round((countTarawih / total) * 100) : 0;
+        const pctTadarus = total > 0 ? Math.round((countTadarus / total) * 100) : 0;
+
+        return `
+          <div class="bg-gradient-to-r from-emerald-50/70 to-teal-50/70 rounded-2xl p-5 border border-emerald-100">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-bold text-emerald-950 text-base">Kelas ${cls.name} <span class="text-xs text-gray-500 font-normal">(${cls.wali_kelas || 'Wali Kelas'})</span></h3>
+              <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800">${total} Entri</span>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2.5">
+              <div class="bg-white p-2.5 rounded-xl text-center border">
+                <p class="text-xs text-gray-500">🍽️ Puasa</p>
+                <p class="font-bold text-emerald-800">${countPuasa}/${total}</p>
+                <div class="w-full bg-gray-100 rounded-full h-1.5 mt-1 overflow-hidden">
+                  <div class="bg-emerald-500 h-1.5 rounded-full" style="width: ${pctPuasa}%"></div>
+                </div>
+              </div>
+              <div class="bg-white p-2.5 rounded-xl text-center border">
+                <p class="text-xs text-gray-500">✨ Tarawih</p>
+                <p class="font-bold text-purple-800">${countTarawih}/${total}</p>
+                <div class="w-full bg-gray-100 rounded-full h-1.5 mt-1 overflow-hidden">
+                  <div class="bg-purple-500 h-1.5 rounded-full" style="width: ${pctTarawih}%"></div>
+                </div>
+              </div>
+              <div class="bg-white p-2.5 rounded-xl text-center border">
+                <p class="text-xs text-gray-500">📖 Tadarus</p>
+                <p class="font-bold text-amber-800">${countTadarus}/${total}</p>
+                <div class="w-full bg-gray-100 rounded-full h-1.5 mt-1 overflow-hidden">
+                  <div class="bg-amber-500 h-1.5 rounded-full" style="width: ${pctTadarus}%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Ekspor Excel (CSV)
+    function exportToCSV() {
+      if (allEntries.length === 0) {
+        showToast('Belum ada data untuk diekspor.', true);
+        return;
+      }
+      const headers = ['No', 'Tanggal', 'Nama', 'Kelas', 'Puasa', 'Sahur', 'Subuh', 'Dzuhur', 'Asar', 'Magrib', 'Isya', 'Tarawih', 'Tadarus', 'Surat', 'Ayat', 'Sedekah'];
+      const rows = allEntries.map((e, idx) => [
+        idx + 1,
+        `"${e.tanggal}"`,
+        `"${e.nama.replace(/"/g, '""')}"`,
+        `"${e.kelas}"`,
+        e.puasa ? 'Ya' : 'Tidak',
+        e.sahur ? 'Ya' : 'Tidak',
+        e.sholat_subuh ? 'Ya' : 'Tidak',
+        e.sholat_dzuhur ? 'Ya' : 'Tidak',
+        e.sholat_asar ? 'Ya' : 'Tidak',
+        e.sholat_magrib ? 'Ya' : 'Tidak',
+        e.sholat_isya ? 'Ya' : 'Tidak',
+        e.tarawih ? 'Ya' : 'Tidak',
+        e.tadarus ? 'Ya' : 'Tidak',
+        `"${(e.tadarus_surat || '').replace(/"/g, '""')}"`,
+        `"${(e.tadarus_ayat || '').replace(/"/g, '""')}"`,
+        e.sedekah ? 'Ya' : 'Tidak'
+      ]);
+
+      const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `rekap-jurnal-ramadhan-${new Date().toISOString().split('T')[0]}.csv`;
+      link.click();
+    }
+
+    // Inisialisasi saat web dibuka
+    loadMasterDataFromGitHub();
+  </script>
+</body>
+</html>
